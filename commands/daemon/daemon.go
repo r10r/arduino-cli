@@ -264,7 +264,7 @@ func (s *ArduinoCoreServerImpl) PlatformSearch(ctx context.Context, req *rpc.Pla
 
 // PlatformList FIXMEDOC
 func (s *ArduinoCoreServerImpl) PlatformList(ctx context.Context, req *rpc.PlatformListReq) (*rpc.PlatformListResp, error) {
-	platforms, err := core.GetPlatforms(req.Instance.Id, req.UpdatableOnly)
+	platforms, err := core.GetPlatforms(req.Instance.Id, req.UpdatableOnly, req.All)
 	if err != nil {
 		return nil, err
 	}

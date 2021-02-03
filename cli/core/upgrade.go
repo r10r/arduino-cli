@@ -57,7 +57,7 @@ func runUpgradeCommand(cmd *cobra.Command, args []string) {
 
 	// if no platform was passed, upgrade allthethings
 	if len(args) == 0 {
-		targets, err := core.GetPlatforms(inst.Id, true)
+		targets, err := core.GetPlatforms(inst.Id, true, false)
 		if err != nil {
 			feedback.Errorf("Error retrieving core list: %v", err)
 			os.Exit(errorcodes.ErrGeneric)

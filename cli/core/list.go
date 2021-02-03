@@ -39,11 +39,13 @@ func initListCommand() *cobra.Command {
 		Run:     runListCommand,
 	}
 	listCommand.Flags().BoolVar(&listFlags.updatableOnly, "updatable", false, "List updatable platforms.")
+	listCommand.Flags().BoolVar(&listFlags.all, "all", false, "If set return all installable and installed cores, including manually installed.")
 	return listCommand
 }
 
 var listFlags struct {
 	updatableOnly bool
+	all           bool
 }
 
 func runListCommand(cmd *cobra.Command, args []string) {
@@ -55,7 +57,7 @@ func runListCommand(cmd *cobra.Command, args []string) {
 
 	logrus.Info("Executing `arduino core list`")
 
-	platforms, err := core.GetPlatforms(inst.Id, listFlags.updatableOnly)
+	platforms, err := core.GetPlatforms(inst.Id, listFlags.updatableOnly, listFlags.all)
 	if err != nil {
 		feedback.Errorf("Error listing platforms: %v", err)
 		os.Exit(errorcodes.ErrGeneric)

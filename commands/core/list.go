@@ -23,7 +23,7 @@ import (
 
 // GetPlatforms returns a list of installed platforms, optionally filtered by
 // those requiring an update.
-func GetPlatforms(instanceID int32, updatableOnly bool) ([]*cores.PlatformRelease, error) {
+func GetPlatforms(instanceID int32, updatableOnly, all bool) ([]*cores.PlatformRelease, error) {
 	i := commands.GetInstance(instanceID)
 	if i == nil {
 		return nil, errors.Errorf("unable to find an instance with ID: %d", instanceID)
@@ -34,16 +34,24 @@ func GetPlatforms(instanceID int32, updatableOnly bool) ([]*cores.PlatformReleas
 		return nil, errors.New("invalid instance")
 	}
 
+	if updatableOnly && all {
+		return nil, errors.New("can't use both updatableOnly and all flags at the same time")
+	}
+
 	res := []*cores.PlatformRelease{}
 	for _, targetPackage := range packageManager.Packages {
 		for _, platform := range targetPackage.Platforms {
-			if platformRelease := packageManager.GetInstalledPlatformRelease(platform); platformRelease != nil {
+			platformRelease := packageManager.GetInstalledPlatformRelease(platform)
+			if all {
+				res = append(res, platform.GetLatestRelease())
+				continue
+			}
+			if platformRelease != nil {
 				if updatableOnly {
 					if latest := platform.GetLatestRelease(); latest == nil || latest == platformRelease {
 						continue
 					}
 				}
-
 				res = append(res, platformRelease)
 			}
 		}
